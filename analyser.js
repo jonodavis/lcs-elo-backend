@@ -38,15 +38,16 @@ const parseCSV = async (filepath) => {
   LECmatchesArray = matchesArray.filter((row) => row.league === "LEC")
   LCKmatchesArray = matchesArray.filter((row) => row.league === "LCK")
   // .filter((row) => row.position === "Team")
-  return [
-    LCSmatchesArray.filter(
-      (row) => new Date(row.date) < new Date("2020-04-02")
-    ),
-    LECmatchesArray.filter(
-      (row) => new Date(row.date) < new Date("2020-04-02")
-    ),
-    LCKmatchesArray,
-  ]
+  // return [
+  //   LCSmatchesArray.filter(
+  //     (row) => new Date(row.date) < new Date("2020-04-02")
+  //   ),
+  //   LECmatchesArray.filter(
+  //     (row) => new Date(row.date) < new Date("2020-04-02")
+  //   ),
+  //   LCKmatchesArray,
+  // ]
+  return [LCSmatchesArray, LECmatchesArray, LCKmatchesArray]
 }
 
 // given the raw array from the csv, returns object of teams
