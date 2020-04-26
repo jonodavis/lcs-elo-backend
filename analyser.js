@@ -209,7 +209,7 @@ const main = async () => {
   )
 
   let fixtures = await getFixtures(9)
-  console.log(LCSteams)
+  console.log(LCKteams)
 
   fs.writeFileSync("./out/LCSteams.json", JSON.stringify(LCSteams))
   fs.writeFileSync("./out/LCSmatches.json", JSON.stringify(LCSmatches))
