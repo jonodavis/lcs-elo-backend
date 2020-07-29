@@ -33,7 +33,7 @@ let acronyms = {
 
 // turns given csv file into an array of json objects
 const parseCSV = async (filepath) => {
-  let matchesArray = await csv().fromFile(filepath)
+  let matchesArray = await (await csv().fromFile(filepath)).filter((row) => row.split === "Summer")
   LCSmatchesArray = matchesArray.filter((row) => row.league === "LCS")
   LECmatchesArray = matchesArray.filter((row) => row.league === "LEC")
   LCKmatchesArray = matchesArray.filter((row) => row.league === "LCK")
@@ -190,7 +190,7 @@ const getFixtures = async (week) => {
 }
 
 const main = async () => {
-  const filepath = "./in/2020-spring.csv"
+  const filepath = "./in/2020.csv"
   let [LCSmatchesArray, LECmatchesArray, LCKmatchesArray] = await parseCSV(
     filepath
   )
@@ -211,12 +211,12 @@ const main = async () => {
   let fixtures = await getFixtures(9)
   console.log(LCKteams)
 
-  fs.writeFileSync("./out/LCSteams.json", JSON.stringify(LCSteams))
-  fs.writeFileSync("./out/LCSmatches.json", JSON.stringify(LCSmatches))
-  fs.writeFileSync("./out/LECteams.json", JSON.stringify(LECteams))
-  fs.writeFileSync("./out/LECmatches.json", JSON.stringify(LECmatches))
-  fs.writeFileSync("./out/LCKteams.json", JSON.stringify(LCKteams))
-  fs.writeFileSync("./out/LCKmatches.json", JSON.stringify(LCKmatches))
+  fs.writeFileSync("./out/summer/LCSteams.json", JSON.stringify(LCSteams))
+  fs.writeFileSync("./out/summer/LCSmatches.json", JSON.stringify(LCSmatches))
+  fs.writeFileSync("./out/summer/LECteams.json", JSON.stringify(LECteams))
+  fs.writeFileSync("./out/summer/LECmatches.json", JSON.stringify(LECmatches))
+  fs.writeFileSync("./out/summer/LCKteams.json", JSON.stringify(LCKteams))
+  fs.writeFileSync("./out/summer/LCKmatches.json", JSON.stringify(LCKmatches))
 }
 
 main()
