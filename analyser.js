@@ -61,8 +61,8 @@ const fillTeams = (matchesArray, previousSplit=null) => {
         ? {
             wins: 0,
             loses: 0,
-            elo: previousSplit ? (0.75 * previousSplit[match.team].elo) + (0.25 * 1500): 1500,
-            oldElo: previousSplit ? (0.75 * previousSplit[match.team].elo) + (0.25 * 1500): 1500,
+            elo: previousSplit ? Object.keys(previousSplit).includes(match.team) ? ((0.75 * previousSplit[match.team].elo) + (0.25 * 1500)): 1500: 1500,
+            oldElo: previousSplit ? Object.keys(previousSplit).includes(match.team) ? ((0.75 * previousSplit[match.team].elo) + (0.25 * 1500)): 1500: 1500,
             kills: 0,
             deaths: 0,
             gamesPlayed: 0,
@@ -216,11 +216,11 @@ const main = async () => {
     sortMatchesByDate(fillMatches(LCSSummerMatchesArray))
   )
   let [LECSummerTeams, LECSummermMatches] = updateTeamsAndMatches(
-    fillTeams(LECSummerMatchesArray),
+    fillTeams(LECSummerMatchesArray, LECSpringTeams),
     sortMatchesByDate(fillMatches(LECSummerMatchesArray))
   )
   let [LCKSummerTeams, LCKSummerMatches] = updateTeamsAndMatches(
-    fillTeams(LCKSummerMatchesArray),
+    fillTeams(LCKSummerMatchesArray, LCKSpringTeams),
     sortMatchesByDate(fillMatches(LCKSummerMatchesArray))
   )
 
