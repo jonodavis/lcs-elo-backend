@@ -3,19 +3,17 @@ const $ = require("cheerio")
 const csv = require("csvtojson")
 const fs = require("fs")
 
-const url = "https://lol.gamepedia.com/LCS/2020_Season/Spring_Season"
-
 let acronyms = {
-  EG: "Evil Geniuses",
+  "EG": "Evil Geniuses",
   "100": "100 Thieves",
-  TSM: "Team SoloMid",
-  C9: "Cloud9",
-  IMT: "Immortals",
-  GG: "Golden Guardians",
-  DIG: "Dignitas",
-  FLY: "FlyQuest",
-  TL: "Team Liquid",
-  CLG: "Counter Logic Gaming",
+  "TSM": "Team SoloMid",
+  "C9": "Cloud9",
+  "IMT": "Immortals",
+  "GG": "Golden Guardians",
+  "DIG": "Dignitas",
+  "FLY": "FlyQuest",
+  "TL": "Team Liquid",
+  "CLG": "Counter Logic Gaming",
 }
 
 // let startElos = {
@@ -33,10 +31,13 @@ let acronyms = {
 
 // turns given csv file into an array of json objects
 const parseCSV = async (filepath) => {
-  let matchesArray = await (await csv().fromFile(filepath)).filter((row) => row.split === "Summer")
-  LCSmatchesArray = matchesArray.filter((row) => row.league === "LCS")
-  LECmatchesArray = matchesArray.filter((row) => row.league === "LEC")
-  LCKmatchesArray = matchesArray.filter((row) => row.league === "LCK")
+  let matchesArray = await (await csv().fromFile(filepath))
+  LCSSpringMatchesArray = matchesArray.filter((row) => row.league === "LCS" && row.split === "Spring")
+  LECSpringMatchesArray = matchesArray.filter((row) => row.league === "LEC" && row.split === "Spring")
+  LCKSpringMatchesArray = matchesArray.filter((row) => row.league === "LCK" && row.split === "Spring")
+  LCSSummerMatchesArray = matchesArray.filter((row) => row.league === "LCS" && row.split === "Summer")
+  LECSummerMatchesArray = matchesArray.filter((row) => row.league === "LEC" && row.split === "Summer")
+  LCKSummerMatchesArray = matchesArray.filter((row) => row.league === "LCK" && row.split === "Summer")
   // .filter((row) => row.position === "Team")
   // return [
   //   LCSmatchesArray.filter(
@@ -47,7 +48,7 @@ const parseCSV = async (filepath) => {
   //   ),
   //   LCKmatchesArray,
   // ]
-  return [LCSmatchesArray, LECmatchesArray, LCKmatchesArray]
+  return [LCSSpringMatchesArray, LECSpringMatchesArray, LCKSpringMatchesArray, LCSSummerMatchesArray, LECSummerMatchesArray, LCKSummerMatchesArray]
 }
 
 // given the raw array from the csv, returns object of teams
@@ -170,14 +171,14 @@ const updateTeamsAndMatches = (teams, matches) => {
 }
 
 const getFixtures = async (week) => {
-  const url = "https://lol.gamepedia.com/LCS/2020_Season/Spring_Season"
+  const url = "https://lol.gamepedia.com/LCS/2020_Season/Summer_Season"
   let html = await rp(url)
   let blueTeams = $(`.ml-w${week} .matchlist-team1`, html)
     .toArray()
-    .map((x) => $(x).text())
+    .map((x) => $(x).text().trim().slice(0, -2))
   let redTeams = $(`.ml-w${week} .matchlist-team2`, html)
     .toArray()
-    .map((x) => $(x).text())
+    .map((x) => $(x).text().trim().slice(2))
   let counter = -1
   let fixtures = blueTeams.map((blueTeam) => {
     counter++
@@ -191,32 +192,55 @@ const getFixtures = async (week) => {
 
 const main = async () => {
   const filepath = "./in/2020.csv"
-  let [LCSmatchesArray, LECmatchesArray, LCKmatchesArray] = await parseCSV(
-    filepath
+  let [LCSSpringMatchesArray,
+       LECSpringMatchesArray, 
+       LCKSpringMatchesArray, 
+       LCSSummerMatchesArray, 
+       LECSummerMatchesArray, 
+       LCKSummerMatchesArray] = await parseCSV(filepath)
+
+  let [LCSSpringTeams, LCSSpringMatches] = updateTeamsAndMatches(
+    fillTeams(LCSSpringMatchesArray),
+    sortMatchesByDate(fillMatches(LCSSpringMatchesArray))
+  )
+  let [LECSpringTeams, LECSpringmMatches] = updateTeamsAndMatches(
+    fillTeams(LECSpringMatchesArray),
+    sortMatchesByDate(fillMatches(LECSpringMatchesArray))
+  )
+  let [LCKSpringTeams, LCKSpringMatches] = updateTeamsAndMatches(
+    fillTeams(LCKSpringMatchesArray),
+    sortMatchesByDate(fillMatches(LCKSpringMatchesArray))
+  )
+  let [LCSSummerTeams, LCSSummerMatches] = updateTeamsAndMatches(
+    fillTeams(LCSSummerMatchesArray),
+    sortMatchesByDate(fillMatches(LCSSummerMatchesArray))
+  )
+  let [LECSummerTeams, LECSummermMatches] = updateTeamsAndMatches(
+    fillTeams(LECSummerMatchesArray),
+    sortMatchesByDate(fillMatches(LECSummerMatchesArray))
+  )
+  let [LCKSummerTeams, LCKSummerMatches] = updateTeamsAndMatches(
+    fillTeams(LCKSummerMatchesArray),
+    sortMatchesByDate(fillMatches(LCKSummerMatchesArray))
   )
 
-  let [LCSteams, LCSmatches] = updateTeamsAndMatches(
-    fillTeams(LCSmatchesArray),
-    sortMatchesByDate(fillMatches(LCSmatchesArray))
-  )
-  let [LECteams, LECmatches] = updateTeamsAndMatches(
-    fillTeams(LECmatchesArray),
-    sortMatchesByDate(fillMatches(LECmatchesArray))
-  )
-  let [LCKteams, LCKmatches] = updateTeamsAndMatches(
-    fillTeams(LCKmatchesArray),
-    sortMatchesByDate(fillMatches(LCKmatchesArray))
-  )
+  let fixtures = await getFixtures(8)
+  // console.log("memes")
 
-  let fixtures = await getFixtures(9)
-  console.log(LCKteams)
-
-  fs.writeFileSync("./out/summer/LCSteams.json", JSON.stringify(LCSteams))
-  fs.writeFileSync("./out/summer/LCSmatches.json", JSON.stringify(LCSmatches))
-  fs.writeFileSync("./out/summer/LECteams.json", JSON.stringify(LECteams))
-  fs.writeFileSync("./out/summer/LECmatches.json", JSON.stringify(LECmatches))
-  fs.writeFileSync("./out/summer/LCKteams.json", JSON.stringify(LCKteams))
-  fs.writeFileSync("./out/summer/LCKmatches.json", JSON.stringify(LCKmatches))
+  // spring split
+  fs.writeFileSync("./out/LCSteams.json", JSON.stringify(LCSSpringTeams))
+  fs.writeFileSync("./out/LCSmatches.json", JSON.stringify(LCSSpringMatches))
+  fs.writeFileSync("./out/LECteams.json", JSON.stringify(LECSpringTeams))
+  fs.writeFileSync("./out/LECmatches.json", JSON.stringify(LECSpringmMatches))
+  fs.writeFileSync("./out/LCKteams.json", JSON.stringify(LCKSpringTeams))
+  fs.writeFileSync("./out/LCKmatches.json", JSON.stringify(LCKSpringMatches))
+  // summer split
+  fs.writeFileSync("./out/summer/LCSteams.json", JSON.stringify(LCSSummerTeams))
+  fs.writeFileSync("./out/summer/LCSmatches.json", JSON.stringify(LCSSummerMatches))
+  fs.writeFileSync("./out/summer/LECteams.json", JSON.stringify(LECSummerTeams))
+  fs.writeFileSync("./out/summer/LECmatches.json", JSON.stringify(LECSummermMatches))
+  fs.writeFileSync("./out/summer/LCKteams.json", JSON.stringify(LCKSummerTeams))
+  fs.writeFileSync("./out/summer/LCKmatches.json", JSON.stringify(LCKSummerMatches))
 }
 
 main()
