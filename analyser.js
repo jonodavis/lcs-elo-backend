@@ -52,7 +52,7 @@ const parseCSV = async (filepath) => {
 }
 
 // given the raw array from the csv, returns object of teams
-const fillTeams = (matchesArray) => {
+const fillTeams = (matchesArray, previousSplit=null) => {
   let teams = {}
   matchesArray
     .filter((row) => row.position === "team")
@@ -61,8 +61,8 @@ const fillTeams = (matchesArray) => {
         ? {
             wins: 0,
             loses: 0,
-            elo: 1500, // startElos[match.team],
-            oldElo: 1500, // startElos[match.team],
+            elo: previousSplit ? (0.75 * previousSplit[match.team].elo) + (0.25 * 1500): 1500,
+            oldElo: previousSplit ? (0.75 * previousSplit[match.team].elo) + (0.25 * 1500): 1500,
             kills: 0,
             deaths: 0,
             gamesPlayed: 0,
@@ -212,7 +212,7 @@ const main = async () => {
     sortMatchesByDate(fillMatches(LCKSpringMatchesArray))
   )
   let [LCSSummerTeams, LCSSummerMatches] = updateTeamsAndMatches(
-    fillTeams(LCSSummerMatchesArray),
+    fillTeams(LCSSummerMatchesArray, LCSSpringTeams),
     sortMatchesByDate(fillMatches(LCSSummerMatchesArray))
   )
   let [LECSummerTeams, LECSummermMatches] = updateTeamsAndMatches(
