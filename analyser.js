@@ -38,35 +38,25 @@ const parseCSV = async (filepath) => {
   LCSSummerMatchesArray = matchesArray.filter((row) => row.league === "LCS" && row.split === "Summer")
   LECSummerMatchesArray = matchesArray.filter((row) => row.league === "LEC" && row.split === "Summer")
   LCKSummerMatchesArray = matchesArray.filter((row) => row.league === "LCK" && row.split === "Summer")
-  // .filter((row) => row.position === "Team")
-  // return [
-  //   LCSmatchesArray.filter(
-  //     (row) => new Date(row.date) < new Date("2020-04-02")
-  //   ),
-  //   LECmatchesArray.filter(
-  //     (row) => new Date(row.date) < new Date("2020-04-02")
-  //   ),
-  //   LCKmatchesArray,
-  // ]
   return [LCSSpringMatchesArray, LECSpringMatchesArray, LCKSpringMatchesArray, LCSSummerMatchesArray, LECSummerMatchesArray, LCKSummerMatchesArray]
 }
 
 // given the raw array from the csv, returns object of teams
-const fillTeams = (matchesArray, previousSplit=null) => {
+const fillTeams = (matchesArray, previousSplit = null) => {
   let teams = {}
   matchesArray
     .filter((row) => row.position === "team")
     .forEach((match) => {
       teams[match.team] = !(match.team in teams)
         ? {
-            wins: 0,
-            loses: 0,
-            elo: previousSplit ? Object.keys(previousSplit).includes(match.team) ? ((0.75 * previousSplit[match.team].elo) + (0.25 * 1500)): 1500: 1500,
-            oldElo: previousSplit ? Object.keys(previousSplit).includes(match.team) ? ((0.75 * previousSplit[match.team].elo) + (0.25 * 1500)): 1500: 1500,
-            kills: 0,
-            deaths: 0,
-            gamesPlayed: 0,
-          }
+          wins: 0,
+          loses: 0,
+          elo: previousSplit ? Object.keys(previousSplit).includes(match.team) ? ((0.75 * previousSplit[match.team].elo) + (0.25 * 1500)) : 1500 : 1500,
+          oldElo: previousSplit ? Object.keys(previousSplit).includes(match.team) ? ((0.75 * previousSplit[match.team].elo) + (0.25 * 1500)) : 1500 : 1500,
+          kills: 0,
+          deaths: 0,
+          gamesPlayed: 0,
+        }
         : teams[match.team]
       // update wins/losses
       if (match.result === "1") {
@@ -89,19 +79,19 @@ const fillMatches = (matchesArray) => {
     match.date = new Date(match.date)
     matches[match.gameid] = !(match.gameid in matches)
       ? {
-          "100": {},
-          "200": {},
-          "1": {},
-          "2": {},
-          "3": {},
-          "4": {},
-          "5": {},
-          "6": {},
-          "7": {},
-          "8": {},
-          "9": {},
-          "10": {},
-        }
+        "100": {},
+        "200": {},
+        "1": {},
+        "2": {},
+        "3": {},
+        "4": {},
+        "5": {},
+        "6": {},
+        "7": {},
+        "8": {},
+        "9": {},
+        "10": {},
+      }
       : matches[match.gameid]
     matches[match.gameid][match.playerid] = match
   })
@@ -193,11 +183,11 @@ const getFixtures = async (week) => {
 const main = async () => {
   const filepath = "./in/2020.csv"
   let [LCSSpringMatchesArray,
-       LECSpringMatchesArray, 
-       LCKSpringMatchesArray, 
-       LCSSummerMatchesArray, 
-       LECSummerMatchesArray, 
-       LCKSummerMatchesArray] = await parseCSV(filepath)
+    LECSpringMatchesArray,
+    LCKSpringMatchesArray,
+    LCSSummerMatchesArray,
+    LECSummerMatchesArray,
+    LCKSummerMatchesArray] = await parseCSV(filepath)
 
   let [LCSSpringTeams, LCSSpringMatches] = updateTeamsAndMatches(
     fillTeams(LCSSpringMatchesArray),
