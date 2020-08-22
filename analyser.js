@@ -16,19 +16,6 @@ let acronyms = {
   "CLG": "Counter Logic Gaming",
 }
 
-// let startElos = {
-//   "Evil Geniuses": 1400,
-//   "100 Thieves": 1480,
-//   "Team SoloMid": 1520,
-//   Cloud9: 1560,
-//   Immortals: 1480,
-//   "Golden Guardians": 1480,
-//   Dignitas: 1500,
-//   FlyQuest: 1420,
-//   "Team Liquid": 1600,
-//   "Counter Logic Gaming": 1560,
-// }
-
 // turns given csv file into an array of json objects
 const parseCSV = async (filepath) => {
   let matchesArray = await (await csv().fromFile(filepath))
