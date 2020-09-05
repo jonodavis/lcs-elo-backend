@@ -16,9 +16,15 @@ let acronyms = {
   "CLG": "Counter Logic Gaming",
 }
 
+let badGames = ["ESPORTSTMNT03/1353399", "ESPORTSTMNT03/1353412", "ESPORTSTMNT03/1353414",
+                "ESPORTSTMNT03/1343343", "ESPORTSTMNT03/1343345", "ESPORTSTMNT03/1353486",
+                "ESPORTSTMNT03/1353499", "ESPORTSTMNT03/1353501", "ESPORTSTMNT03/1353507",
+                "ESPORTSTMNT03/1353560", "ESPORTSTMNT03/1353588", "ESPORTSTMNT03/1353591",]
+
 // turns given csv file into an array of json objects
 const parseCSV = async (filepath) => {
   let matchesArray = await (await csv().fromFile(filepath))
+  matchesArray = matchesArray.filter((row) => !(badGames.includes(row.gameid)))
   LCSSpringMatchesArray = matchesArray.filter((row) => row.league === "LCS" && row.split === "Spring")
   LECSpringMatchesArray = matchesArray.filter((row) => row.league === "LEC" && row.split === "Spring")
   LCKSpringMatchesArray = matchesArray.filter((row) => row.league === "LCK" && row.split === "Spring")
@@ -202,7 +208,6 @@ const main = async () => {
   )
 
   let fixtures = await getFixtures(8)
-  // console.log("memes")
 
   // spring split
   fs.writeFileSync("./out/LCSteams.json", JSON.stringify(LCSSpringTeams))
