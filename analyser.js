@@ -121,7 +121,7 @@ const sortMatchesByDate = (matches) => {
   Object.keys(matches).forEach((match) => {
     sortable.push(matches[match])
   })
-  sortable.sort((a, b) => Number(a["100"].date) - Number(b["100"].date))
+  sortable.sort((a, b) => Number(a["100"].date) - Number(b["100"].date))             
   return sortable
 }
 
