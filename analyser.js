@@ -46,7 +46,6 @@ const parseCSV = async (filepath) => {
   LCSSummerMatchesArray = matchesArray.filter((row) => row.league === "LCS" && row.split === "Summer")
   LECSummerMatchesArray = matchesArray.filter((row) => row.league === "LEC" && row.split === "Summer")
   LCKSummerMatchesArray = matchesArray.filter((row) => row.league === "LCK" && row.split === "Summer")
-  console.log(LCSSummerMatchesArray[0])
   return [LCSSpringMatchesArray, LECSpringMatchesArray, LCKSpringMatchesArray, LCSSummerMatchesArray, LECSummerMatchesArray, LCKSummerMatchesArray]
 }
 
