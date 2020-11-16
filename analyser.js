@@ -37,7 +37,8 @@ const parseCSV = async (filepath) => {
       "kills": row.kills,
       "deaths": row.deaths,
       "result": row.result,
-      "position": row.position
+      "position": row.position,
+      "playoffs": row.playoffs
     }))
   LCSSpringMatchesArray = matchesArray.filter((row) => row.league === "LCS" && row.split === "Spring")
   LECSpringMatchesArray = matchesArray.filter((row) => row.league === "LEC" && row.split === "Spring")
