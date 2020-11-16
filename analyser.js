@@ -25,12 +25,27 @@ let badGames = ["ESPORTSTMNT03/1353399", "ESPORTSTMNT03/1353412", "ESPORTSTMNT03
 const parseCSV = async (filepath) => {
   let matchesArray = await (await csv().fromFile(filepath))
   matchesArray = matchesArray.filter((row) => !(badGames.includes(row.gameid)))
+  matchesArray = matchesArray.filter((row) => row.playerid === "100" || row.playerid === "200")
+  matchesArray = matchesArray.map(row => 
+    ({
+      "gameid": row.gameid, 
+      "date": row.date, 
+      "playerid": row.playerid,
+      "league": row.league,
+      "split": row.split,
+      "team": row.team,
+      "kills": row.kills,
+      "deaths": row.deaths,
+      "result": row.result,
+      "position": row.position
+    }))
   LCSSpringMatchesArray = matchesArray.filter((row) => row.league === "LCS" && row.split === "Spring")
   LECSpringMatchesArray = matchesArray.filter((row) => row.league === "LEC" && row.split === "Spring")
   LCKSpringMatchesArray = matchesArray.filter((row) => row.league === "LCK" && row.split === "Spring")
   LCSSummerMatchesArray = matchesArray.filter((row) => row.league === "LCS" && row.split === "Summer")
   LECSummerMatchesArray = matchesArray.filter((row) => row.league === "LEC" && row.split === "Summer")
   LCKSummerMatchesArray = matchesArray.filter((row) => row.league === "LCK" && row.split === "Summer")
+  console.log(LCSSummerMatchesArray[0])
   return [LCSSpringMatchesArray, LECSpringMatchesArray, LCKSpringMatchesArray, LCSSummerMatchesArray, LECSummerMatchesArray, LCKSummerMatchesArray]
 }
 
@@ -73,17 +88,7 @@ const fillMatches = (matchesArray) => {
     matches[match.gameid] = !(match.gameid in matches)
       ? {
         "100": {},
-        "200": {},
-        "1": {},
-        "2": {},
-        "3": {},
-        "4": {},
-        "5": {},
-        "6": {},
-        "7": {},
-        "8": {},
-        "9": {},
-        "10": {},
+        "200": {}
       }
       : matches[match.gameid]
     matches[match.gameid][match.playerid] = match
